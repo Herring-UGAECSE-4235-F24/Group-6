@@ -62,8 +62,8 @@ main:
     orr     r2, r2, #MAKE_GPIO22_OUTPUT @ enter function code
     str     r2, [r0]                    @ update register
     
-    ldr On_Time, =1
-    ldr Off_Time, =1
+    ldr On_Time, =750000
+    ldr Off_Time, =250000
 loop: bl on
 	mov r9, On_Time
 	bl delay
