@@ -28,7 +28,7 @@
 
 
 int main(int argc, char **argv)
-{
+{      
 	printf("Hello World from Group 6!!\n");
 	printf("Testing BCM2835 and gpiotopin.");
 	return 0;

@@ -28,6 +28,8 @@
 
 int main(int argc, char **argv)
 {
+	int freq = E4235_WhatAmI();
+	printf("%d\n", freq);
 	printf("Hello World from Group 6!!\n");
 	printf("Testing class library.");
 	return 0;

@@ -61,7 +61,9 @@ main:
     bic     r2, r2, #GPFSEL2_GPIO22_MASK@ clear pin field
     orr     r2, r2, #MAKE_GPIO22_OUTPUT @ enter function code
     str     r2, [r0]                    @ update register
-    
+    @5000000/5000000
+    @500000/500000
+    @750000/250000
     ldr On_Time, =750000
     ldr Off_Time, =250000
 loop: bl on
