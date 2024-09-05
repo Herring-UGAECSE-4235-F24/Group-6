@@ -28,10 +28,14 @@
 
 int main(int argc, char **argv)
 {
-	int freq = E4235_WhatAmI();
-	printf("%d\n", freq);
+	E4235_KYBdeblock(1);
 	printf("Hello World from Group 6!!\n");
 	printf("Testing class library.");
-	return 0;
+	
+	int test = 0;
+	while(test == 0) {
+		scanf("%d", &test);
+	}
+	printf("%d", test);
 }
 
