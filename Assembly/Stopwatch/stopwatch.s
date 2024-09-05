@@ -19,33 +19,33 @@ _print:
         MOV R3, R7
 	MOV R2, R8
 	MOV R1, R9
-        BL printf
+        BL printf		@prints the value every loop
 
-	ADD R7, R7, #1
-	CMP R7, #100
+	ADD R7, R7, #1		@increment hundrenths
+	CMP R7, #100		
 	BEQ _hunds
-	BNE _loop
+	BNE _loop		@runs loop until a second passes
 	
 _hunds:	
-	SUBS R7, R7, #100
-	ADD R8, R8, #1
+	SUBS R7, R7, #100	@resetting hundreths
+	ADD R8, R8, #1		@increment seconds
 	CMP R8, #60
 	BEQ _secs
-	BNE _loop
+	BNE _loop		@runs loop until a minute passes
 _secs:
-	SUBS R8, R8, #60
-	ADD R9, R9, #1
+	SUBS R8, R8, #60	@resets seconds
+	ADD R9, R9, #1		@increment minutes
 	CMP R9, #2
 	BEQ _done
-	BNE _loop
+	BNE _loop		@runs until 2 mins pass
 _done:
-        SUBS R9, R9, #2
+        SUBS R9, R9, #2		@resets minutes
 	B _loop
 	
 _loop:	
-		LDR R3, =8826100		@ r1 = 1,000,000,000 (inner loop count)
+		LDR R3, =8826100	@ r3 = number of instructions for .01 seconds
 _inner:	SUBS R3, R3, #1			@ r3 = r3 - 1, decrement inner loop
-		BNE _inner				@ repeat until r3 = 0
+		BNE _inner		@ repeat until r3 = 0
 		BEQ _print
 
 _exit:
@@ -53,7 +53,5 @@ _exit:
         MOV PC, LR
 
 .data
-string:
-        .asciz "%02d:%02d:%02d\n"
-iterations:
-        .word 15                 @ outer loop iterations
+string:					@formatting printf
+        .asciz "%02d:%02d:%02d\n"	@%02d will add padding 0s

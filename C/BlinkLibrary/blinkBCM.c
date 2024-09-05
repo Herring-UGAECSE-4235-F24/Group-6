@@ -16,18 +16,18 @@
 // Copyright (C) 2011 Mike McCauley
 // $Id: RF22.h,v 1.21 2012/05/30 01:51:25 mikem Exp $
 
-#include "bcm2835.h"
 #include <stdio.h>
 #include "gpiotopin.h"
+#include "bcm2835.h"
 
-// Blinks on RPi Plug P1 pin 11 (which is GPIO pin 17)
+// Blinks on RPi Plug P1 pin 32 (which is GPIO pin 12)
 #define PIN GPIO12
 
 int main(int argc, char **argv)
 {
     // If you call this, it will not actually access the GPIO
     // Use for testing
-//    bcm2835_set_debug(1);
+    //bcm2835_set_debug(1);
 
     printf("Enter on time\n");
     int Ontime;
