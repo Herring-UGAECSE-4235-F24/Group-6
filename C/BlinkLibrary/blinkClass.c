@@ -23,10 +23,20 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "E4235.h"
 
 // Blinks on RPi Plug P1 pin 32 (which is GPIO pin 12)
-#define PIN GPIO12
+//#define PIN GPIO12
+int func(){
+	E4235_Write(12, 1);
+	return 0;
+}
+int fund(){
+	E4235_Write(12, 0);
+	return 0;
+}
+
 
 int main(int argc, char **argv)
 {
@@ -39,11 +49,13 @@ int main(int argc, char **argv)
 	
 	E4235_Select(12, 1); //set GPIO 12 as output
 	
+	
 	while(1) {
-		E4235_Write(12, 1);	
-		E4235_delayNano(500000);
-		E4235_Write(12, 0);
-		E4235_delayNano(500000);
+		printf("test");
+		func();
+		E4235_delayMicro(5000);
+		fund();
+		E4235_delayMicro(5000);
 	}
 	return 0;
 }

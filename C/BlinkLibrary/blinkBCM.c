@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include "gpiotopin.h"
 #include "bcm2835.h"
+#include "E4235.h"
 
 // Blinks on RPi Plug P1 pin 32 (which is GPIO pin 12)
 #define PIN GPIO12
@@ -30,11 +31,11 @@ int main(int argc, char **argv)
     //bcm2835_set_debug(1);
 
     printf("Enter on time\n");
-    int Ontime;
-    scanf("%d", &Ontime);
+    double Ontime;
+    scanf("%lf", &Ontime);
     printf("Enter off time\n");
-    int Offtime;
-    scanf("%d", &Offtime);
+    double Offtime;
+    scanf("%lf", &Offtime);
     
     if (!bcm2835_init())
       return 1;
@@ -49,13 +50,15 @@ int main(int argc, char **argv)
 	bcm2835_gpio_write(PIN, HIGH);
 	
 	// wait a bit
-	bcm2835_delay(Ontime);
+	//bcm2835_delay(Ontime);
+	E4235_delayMicro(Ontime);
 	
 	// turn it off
 	bcm2835_gpio_write(PIN, LOW);
 	
 	// wait a bit
-	bcm2835_delay(Offtime);
+	//bcm2835_delay(Offtime);
+	E4235_delayMicro(Offtime);
     }
     bcm2835_close();
     return 0;
