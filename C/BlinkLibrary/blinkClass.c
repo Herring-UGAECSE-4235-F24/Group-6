@@ -26,6 +26,8 @@
 #include <stdlib.h>
 #include "E4235.h"
 
+
+
 // Blinks on RPi Plug P1 pin 32 (which is GPIO pin 12)
 //#define PIN GPIO12
 
@@ -46,7 +48,7 @@ int main(int argc, char **argv)
 	while(1) {
 		E4235_multiwrite(pins, 1, 1);
 		E4235_delayMicro(onTime);
-		E4235_Write(12, 0);
+		E4235_multiwrite(pins, 1, 0);
 		E4235_delayMicro(offTime);
 	}
 	return 0;
