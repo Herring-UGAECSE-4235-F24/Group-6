@@ -28,34 +28,26 @@
 
 // Blinks on RPi Plug P1 pin 32 (which is GPIO pin 12)
 //#define PIN GPIO12
-int func(){
-	E4235_Write(12, 1);
-	return 0;
-}
-int fund(){
-	E4235_Write(12, 0);
-	return 0;
-}
 
 
 int main(int argc, char **argv)
 {
-	/*printf("Enter on time in ns\n");
+	printf("Enter on time in ns\n");
     int onTime;
     scanf("%d", &onTime);
     printf("Enter off time in ns\n");
     int offTime;
-    scanf("%d", &offTime);*/
+    scanf("%d", &offTime);
 	
 	E4235_Select(12, 1); //set GPIO 12 as output
 	
+	int pins[1] = {12};
 	
 	while(1) {
-		printf("test");
-		func();
-		E4235_delayMicro(5000);
-		fund();
-		E4235_delayMicro(5000);
+		E4235_multiwrite(pins, 1, 1);
+		E4235_delayMicro(onTime);
+		E4235_Write(12, 0);
+		E4235_delayMicro(offTime);
 	}
 	return 0;
 }
