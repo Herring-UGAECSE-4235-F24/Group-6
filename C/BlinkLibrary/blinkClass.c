@@ -34,10 +34,10 @@
 
 int main(int argc, char **argv)
 {
-	printf("Enter on time in ns\n");
+	printf("Enter on time in us\n");
     int onTime;
     scanf("%d", &onTime);
-    printf("Enter off time in ns\n");
+    printf("Enter off time in us\n");
     int offTime;
     scanf("%d", &offTime);
 	

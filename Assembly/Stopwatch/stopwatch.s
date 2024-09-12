@@ -5,14 +5,23 @@
 @Deliverable 2: your code on github and in your writeup.  We will check in class and look at accuracy as well.
 
 	.global main
-    .func main
-
+	.func main
 main:
-        PUSH {LR}
-        BAL _print
+	PUSH {LR}
+	LDR R0, =#0
+	BL E4235_KYBdeblock
+	LDR R0, =begi
+	BL printf
 	LDR R7, =#0	@ hundrendths
 	LDR R8, =#0	@ seconds
 	LDR R9, =#0	@ minutes
+	LDR R0, =input
+	BL scanf
+	BL printf
+	LDR R0, =#1
+	BL E4235_KYBdeblock
+	B _exit
+	
 
 _print:
         LDR R0, =string		@formatting printf        
@@ -21,6 +30,7 @@ _print:
 	MOV R1, R9
         BL printf		@prints the value every loop
 
+_inc:
 	ADD R7, R7, #1		@increment hundrenths
 	CMP R7, #100		
 	BEQ _hunds
@@ -43,8 +53,9 @@ _done:
 	B _loop
 	
 _loop:	
-		LDR R3, =8826100	@ r3 = number of instructions for .01 seconds
+		LDR R3, =8826100/2	@ r3 = number of instructions for .01 seconds
 _inner:	SUBS R3, R3, #1			@ r3 = r3 - 1, decrement inner loop
+		LDR R0, =input
 		BNE _inner		@ repeat until r3 = 0
 		BEQ _print
 
@@ -52,6 +63,20 @@ _exit:
         POP {PC}
         MOV PC, LR
 
+_stop:
+	LDR R0, =#0
+	BL E4235_KYBdeblock
+	LDR R0, =input
+	BL scanf
+	
+	LDR R0, =#1
+	BL E4235_KYBdeblock
+
 .data
 string:					@formatting printf
         .asciz "%02d:%02d:%02d\n"	@%02d will add padding 0s
+begi:					
+        .asciz "Hit r to start\n"	
+input:
+	.asciz "%c"
+
