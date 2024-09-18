@@ -1,4 +1,4 @@
-OBJS = scantest.o
+OBJS = stopwatch.o
 ifdef DEBUG
 DEBUGFLGS = -g
 else
@@ -8,7 +8,7 @@ endif
 %.o : %.s
 	as $(DEBUGFLGS) $< -o $@
 GPIO_OFF: $(OBJS)
-	gcc -g -o scantest $(OBJS) -lc -lE4235
+	gcc -g -o stopwatch $(OBJS) -lc -lE4235
 
 clean:
-	rm *.o scantest
+	rm *.o stopwatch

@@ -8,30 +8,71 @@
 	.func main
 main:
 	PUSH {LR}
-	LDR R0, =#0
-	@BL E4235_KYBdeblock
-	LDR R0, =begi
+	LDR R0, =1
+	BL E4235_KYBdeblock
+	BL clear
+	
+run:
+	LDR R0, =test	
 	BL printf
-	@LDR R0, =input
-	@BL printf
+	
+run_loop:		@needs to keep incrementing and printing until 'l' 's' or 'c' are pressed
+	LDR R0, =char
+	LDR R1, =input
+	BL scanf
+	
+	LDR R0, =input	@storing input
+	LDRB R4, [R0]
+	
+	LDR R0, =lap_char
+	LDRB R5, [R0]
+	CMP R4, R5	@checks if input is 'l'
+	BEQ lap
+	
+	LDR R0, =stop_char
+	LDRB R5, [R0]
+	CMP R4, R5	@checks if input is 's'
+	BEQ stop
+	
+	LDR R0, =clr_char
+	LDRB R5, [R0]
+	CMP R4, R5	@checks if input is 'c'
+	BEQ clear	@resets to 0:0:0
+	BNE run_loop
+
+clear:
 	LDR R7, =#0	@ hundrendths
 	LDR R8, =#0	@ seconds
 	LDR R9, =#0	@ minutes
-	LDR R0, =format
+	BL _print
+
+clr_loop:
+	LDR R0, =char
 	LDR R1, =input
 	BL scanf
-	BL printf
-	LDR R0, =#1
-	@BL E4235_KYBdeblock
-	B _exit
 	
-
+	LDR R0, =input	@storing input
+	LDRB R4, [R0]
+	
+	LDR R0, =run_char
+	LDRB R5, [R0]
+	CMP R4, R5	@checks if input is 'r'
+	
+	BEQ run		@if so, run the clock starting from 0:0:0
+	BNE clr_loop	@if not, keep scanning
+	
+	
 _print:
-        LDR R0, =string		@formatting printf        
+	PUSH {LR}		@saving LR
+	
+        LDR R0, =time		@formatting printf        
         MOV R3, R7
 	MOV R2, R8
 	MOV R1, R9
-        BL printf		@prints the value every loop
+        BL printf		
+	
+	POP {LR}		@LR has been changed by BL printf. restoring it
+	BX LR
 
 _inc:
 	ADD R7, R7, #1		@increment hundrenths
@@ -76,13 +117,19 @@ _stop:
 	@BL E4235_KYBdeblock
 
 .data
-string:					@formatting printf
-        .asciz "%02d:%02d:%02d\n"	@%02d will add padding 0s
-begi:					
-        .asciz "Hit r to start\n"	
-format:
+time:					
+        .asciz "%02d:%02d:%02d\n"	@%02d will add padding 0s	
+char:
 	.asciz "%c"
 input:
 	.byte 0
-clr:
-	.asciz "c"
+run_char:
+	.byte 'r'
+lap_char:
+	.byte 'l'
+stop_char:
+	.byte 's'
+clr_char:
+	.byte 'c'
+test:
+	.asciz "testing run state\n"

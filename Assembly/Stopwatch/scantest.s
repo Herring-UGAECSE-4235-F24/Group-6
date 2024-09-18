@@ -53,6 +53,3 @@ equal:
 		.asciz "c was pressed\n"
 int:
 		.asciz "%d\n"
-null:
-		.byte '\0'
-	
