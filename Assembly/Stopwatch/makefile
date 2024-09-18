@@ -8,7 +8,7 @@ endif
 %.o : %.s
 	as $(DEBUGFLGS) $< -o $@
 GPIO_OFF: $(OBJS)
-	gcc -o scantest $(OBJS) -lc
+	gcc -g -o scantest $(OBJS) -lc -lE4235
 
 clean:
 	rm *.o scantest
