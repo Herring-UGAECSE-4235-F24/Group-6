@@ -9,17 +9,20 @@
 main:
 	PUSH {LR}
 	LDR R0, =#0
-	BL E4235_KYBdeblock
+	@BL E4235_KYBdeblock
 	LDR R0, =begi
 	BL printf
+	@LDR R0, =input
+	@BL printf
 	LDR R7, =#0	@ hundrendths
 	LDR R8, =#0	@ seconds
 	LDR R9, =#0	@ minutes
-	LDR R0, =input
+	LDR R0, =format
+	LDR R1, =input
 	BL scanf
 	BL printf
 	LDR R0, =#1
-	BL E4235_KYBdeblock
+	@BL E4235_KYBdeblock
 	B _exit
 	
 
@@ -65,18 +68,21 @@ _exit:
 
 _stop:
 	LDR R0, =#0
-	BL E4235_KYBdeblock
+	@BL E4235_KYBdeblock
 	LDR R0, =input
 	BL scanf
 	
 	LDR R0, =#1
-	BL E4235_KYBdeblock
+	@BL E4235_KYBdeblock
 
 .data
 string:					@formatting printf
         .asciz "%02d:%02d:%02d\n"	@%02d will add padding 0s
 begi:					
         .asciz "Hit r to start\n"	
-input:
+format:
 	.asciz "%c"
-
+input:
+	.byte 0
+clr:
+	.asciz "c"
