@@ -13,9 +13,9 @@ _start:
   	LDR R6,=value2	 	@R6 = value2
   	LDR R2,[R6]	  	@R1 = [R6], 2 in this case
   	ADD R2,R2,R1	  	@R2 = R2 + R1
-  	LDR R6,=value3	  	@R6 = value3
- 	STR R2,[R6]	  	@[value3] = R2, 3 in this case
-		
+  	LDR R6,=value3	  	@R6 = value3	
+	STR R2,[R6]	  	@[value3] = R2, 3 in this case
+test:		
 	mov   	r7, #1
 	svc  	0
 
