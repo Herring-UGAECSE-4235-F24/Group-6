@@ -1,20 +1,20 @@
 
 		.global main
 		.func main
+		
 main:
 		PUSH {LR}
 		LDR R0, =1
 		BL E4235_KYBdeblock
 		
 		BL read
-
-read:
-		LDR R0, =input
+		
+read:	LDR R0, =input
 		LDRB R4, [R0]
 		LDRB R5, [R0]
   		LDR R6, =0
 		
-loop:		LDR R0, =char
+loop:	LDR R0, =char
 		LDR R1, =input
 		BL scanf
 		
@@ -26,8 +26,7 @@ loop:		LDR R0, =char
 		BEQ loop
 		BNE check
 		
-check:	
-		LDR R0, =input
+check:	LDR R0, =input
 		LDRB R3, [R0]
 		LDR R0, =compare
 		LDRB R2, [R0]
@@ -37,12 +36,11 @@ check:
 		LDR R0, =equal
 		BL printf
 		
-_exit:
-		LDR R0, =int
-	 	MOV R1, R6
-   		BL printf
-	        POP {PC}
-	        MOV PC, LR
+_exit:	LDR R0, =int
+		MOV R1, R6
+		BL printf
+	    POP {PC}
+	    MOV PC, LR
         
 .data
 char:
