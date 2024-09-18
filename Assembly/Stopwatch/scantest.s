@@ -3,26 +3,26 @@
 		.func main
 main:
 		PUSH {LR}
-		LDR R0, =0
+		LDR R0, =1
 		BL E4235_KYBdeblock
 		
 		BL read
-		
+
 read:
 		LDR R0, =input
 		LDRB R4, [R0]
 		LDRB R5, [R0]
+  		LDR R6, =0
 		
-loop:	LDR R0, =format
+loop:		LDR R0, =char
 		LDR R1, =input
 		BL scanf
 		
 		LDR R0, =input
 		LDRB R5, [R0]
 		CMP R4, R5
-		
-		LDR R0, =test
-		BL printf
+  		ADD R6, R6, #1
+    
 		BEQ loop
 		BNE check
 		
@@ -38,20 +38,23 @@ check:
 		BL printf
 		
 _exit:
-        POP {PC}
-        MOV PC, LR
+		LDR R0, =int
+	 	MOV R1, R6
+   		BL printf
+	        POP {PC}
+	        MOV PC, LR
         
 .data
-format:
+char:
 		.asciz "%c"
 input:
-		.byte 'c'
+		.byte 0
 compare:
 		.byte 'c'
 equal:
 		.asciz "c was pressed\n"
-test:
-		.asciz "looping\n"
+int:
+		.asciz "%d\n"
 null:
 		.byte '\0'
 	
