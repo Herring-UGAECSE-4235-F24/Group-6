@@ -16,7 +16,7 @@ run_loop:
 	BL _inc		@runs the loops that increment the clock
 	BL _print
 	
-	LDR R0, =char
+	LDR R0, =char	@formatting scanf to take a char
 	LDR R1, =input
 	BL scanf
 	
@@ -125,17 +125,17 @@ clr_loop:
 _print:
 	PUSH {LR}		@saving LR
 	
-	CMP R11, #0
-	BNE r
+	CMP R11, #0		
+	BNE r			@if not in lap mode, print current value
 	LDR R0, =printing
-	LDM R0, {R1, R2, R3}
+	LDM R0, {R1, R2, R3}	@if in lap mode, print stored value
 	B continue
 r:      
 	MOV R3, R7
 	MOV R2, R8
 	MOV R1, R9
 continue:
-	LDR R0, =time
+	LDR R0, =time		@formatting string for the clock
         BL printf
 			
 	POP {LR}		@LR has been changed by BL printf. restoring it
@@ -187,4 +187,5 @@ clr_char:
 	.byte 'c'
 .align
 printing:
-	.word 0, 0, 0
+	.word 0, 0, 0			@storage for printing during l
+					@these are arbitrary starting values
