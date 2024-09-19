@@ -5,13 +5,12 @@ main:
 	PUSH {LR}
 	LDR R0, =1
 	BL E4235_KYBdeblock
-	LDR R10, =684	@# of loops for .01 seconds while printing
-	LDR R12, =684
+	LDR R10, =691	@# of loops for .01 seconds
 	BL clear
 	
 run:			@needs to keeps incrementing and printing until 'l' 's' or 'c' are pressed
 	LDR R11, =1	@flag for printing or not. used to keep time
-	LDR R6, =0	@consistent between r and l mode.
+			@consistent between r and l mode.
 
 run_loop:
 	BL _inc		@runs the loops that increment the clock
@@ -42,11 +41,17 @@ run_loop:
 	BNE run_loop
 
 lap:			@keep incrementing, but stop printing the time
-	LDR R11, =0
-	LDR R6, =0
-
+	LDR R11, =0	@setting flag
+	
+	LDR R0, =printing
+	LDM R0, {R1, R2, R3}
+	MOV R3, R7
+	MOV R2, R8
+	MOV R1, R9
+	STM R0, {R1, R2, R3}
 lap_loop:
 	BL _inc	
+	BL _print
 	
 	LDR R0, =char
 	LDR R1, =input
@@ -73,6 +78,9 @@ lap_loop:
 	BNE lap_loop
 	
 stop:			@stop incrementing, just display the time	
+	LDR R11, =1
+stop_loop:
+	BL _print
 	LDR R0, =char
 	LDR R1, =input
 	BL scanf
@@ -89,9 +97,10 @@ stop:			@stop incrementing, just display the time
 	LDRB R5, [R0]
 	CMP R4, R5	@checks if input is 'c'
 	BEQ clear	@resets to 0:0:0
-	BNE stop
+	BNE stop_loop
 
 clear:
+	LDR R11, =1
 	LDR R6, =#0	@inner loops (counts up to 0.01 secs)
 	LDR R7, =#0	@hundrendths
 	LDR R8, =#0	@seconds
@@ -116,35 +125,31 @@ clr_loop:
 _print:
 	PUSH {LR}		@saving LR
 	
-        LDR R0, =time		@formatting printf        
-        MOV R3, R7
+	CMP R11, #0
+	BNE r
+	LDR R0, =printing
+	LDM R0, {R1, R2, R3}
+	B continue
+r:      
+	MOV R3, R7
 	MOV R2, R8
 	MOV R1, R9
+continue:
+	LDR R0, =time
         BL printf
 			
 	POP {LR}		@LR has been changed by BL printf. restoring it
 	BX LR
 
-_inc:	ADDS R6, R6, #1
-
-	@CMP R11, #1		@check if in r or l
-	@BEQ r			@if r, use R10. if l use R12
-	@CMP R6, R12
-	@B continue
-r:	
+_inc:	
+	ADDS R6, R6, #1
 	CMP R6, R10		@checking if .01 secs has passed
-continue:
+
 	BEQ _hunds		@if so, increment hunds
 	BX LR			@if not, return to calling function
 
 _hunds:
-	@CMP R11, #1
-	@BEQ runs
-	@SUBS R6, R6, R12
-	@B continue2
-runs:	
 	SUBS R6, R6, R10	@resetting inner loops
-continue2:
 	ADD R7, R7, #1		@increment hundrenths
 	CMP R7, #100		
 	BEQ _secs		@if a second has passed, increment
@@ -180,5 +185,6 @@ stop_char:
 	.byte 's'
 clr_char:
 	.byte 'c'
-test:
-	.asciz "running"
+.align
+printing:
+	.word 0, 0, 0
