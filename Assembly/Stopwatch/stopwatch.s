@@ -5,7 +5,7 @@ main:
 	PUSH {LR}
 	LDR R0, =1
 	BL E4235_KYBdeblock
-	LDR R10, =691	@# of loops for .01 seconds
+	LDR R10, =684	@# of loops for .01 seconds
 	BL clear
 	
 run:			@needs to keeps incrementing and printing until 'l' 's' or 'c' are pressed
