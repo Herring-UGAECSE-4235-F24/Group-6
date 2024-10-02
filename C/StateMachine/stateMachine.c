@@ -1,27 +1,3 @@
-/*
- * stateMachine.c
- * 
- * Copyright 2024  <group6-24@raspberrypi>
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
- * 
- * 
- */
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
@@ -29,17 +5,18 @@
 #include "bcm2835.h"
 #include <string.h>
 
-void printnums(char output[8]) {
+void printnums(char output[8], int mode) {
 	for(int o = 10; o < 18; o++) {
 		if(output[o-10] == '1') {
 			bcm2835_gpio_write(o, HIGH);
 		} else {
 			bcm2835_gpio_write(o, LOW);
 		}
+		printf("mode : %d\n", mode);
 	}
 }
 
-long currentMillis() { //remember to cite
+long currentMicros() { //remember to cite
 	struct timeval tp;
 	
 	gettimeofday(&tp, NULL);
@@ -48,10 +25,10 @@ long currentMillis() { //remember to cite
 
 int main(int argc, char **argv)
 {
-	long anchor = currentMillis();
-	long anchortwo = currentMillis();
-	long anchorthree = currentMillis();
-	long time = currentMillis();
+	long anchor = currentMicros();
+	long anchortwo = currentMicros();
+	long anchorthree = currentMicros();
+	long time = currentMicros();
 	if (!bcm2835_init())
       return 1;
       
@@ -72,53 +49,62 @@ int main(int argc, char **argv)
 	int ascimode = 0;
 	int pressed = 0;
 	int hash = 0;
+	int hashpress = 0;
 	int release = 0;
 	int alter = 2;
 	char temp = '@';
 	int wave = 0;
 	while(1){
-		long time = currentMillis();
+		long time = currentMicros();
 		//printf("%d\n", time);
 		if(time - anchorthree > 500 && wave == 0){
 			wave = 1;
 			bcm2835_gpio_write(9, LOW);
-			anchorthree = currentMillis();
+			anchorthree = currentMicros();
 		}
 		else if(time - anchorthree > 500 && wave == 1){
 		wave = 0;
 		bcm2835_gpio_write(9, HIGH);
-		anchorthree = currentMillis();
+		anchorthree = currentMicros();
 		
 		for(int x = 20; x < 24; x++){
 			bcm2835_gpio_write(x, HIGH);
 			for(int y = 24; y < 28; y++){
 				if(bcm2835_gpio_lev(y)){
+					release = 0;
+					if(x != 23 && y != 26){
 						xnum = x-20;
 						ynum = y-24;
-						pressed = 1;
-						release = 0;
+						pressed = 1;		
+					} else hashpress = 1;
 				} else if(xnum == x-20 && ynum == y-24 && release == 0){
 					release = 1;
 					alter = 0;
-					anchor = currentMillis();
-					if(xnum == 3 && ynum == 2){
-						hash = 0;
-					}
+					anchor = currentMicros();
+				} else if(hashpress == 1 && x == 23 && y == 26){
+						hash = 1;
+						hashpress = 0;
 				}
 			}
 			bcm2835_gpio_write(x, LOW);
 		}
-	if(time - anchor > 2000000 && release){
-		printf("%c" ,temp);
+	
+	if(time - anchor > 2000000 && release) {
+		//printf("%c" ,temp);
 		if(alter == 0 && time - anchortwo > 2000000){
-			anchortwo = currentMillis();
+			anchortwo = currentMicros();
 			temp = '@';
 			alter = 1;
-			printnums("10000000");
+			printnums("10000000", ascimode);
 		}
 		else if(alter == 1 && time - anchortwo > 500000){ 
-			anchortwo = currentMillis();
+			anchortwo = currentMicros();
 			temp = Vals[xnum][ynum];
+			if(ascimode == 1){
+			printnums(Asci[xnum][ynum], ascimode);	
+			} else {
+			printnums(Numer[xnum][ynum], ascimode);
+			}
 			alter = 0;
 		}	
 	}
@@ -126,19 +112,19 @@ int main(int argc, char **argv)
 		alter = 0;
 	}
 	else{
-		printf("%c\n", Vals[xnum][ynum]);	
-		if (xnum == 3 && ynum == 2 && hash == 0) {
-			hash = 1;
+		//printf("%c, asciimode: %d\n", Vals[xnum][ynum], ascimode);	
+		if (hash == 1) {
+			hash = 0;
 			if (ascimode == 1) {
 				ascimode = 0;
 			} else ascimode = 1;
 			
 		} else if(ascimode == 1){
-			printnums(Asci[xnum][ynum]);	
+			printnums(Asci[xnum][ynum], ascimode);	
 		} else{
-			printnums(Numer[xnum][ynum]);
+			printnums(Numer[xnum][ynum], ascimode);
 			}
-		long now = currentMillis();
+		//long now = currentMicros();
 		//printf("%d\n", now - anchor);
 		//printf("%c\n", Vals[xnum][ynum]);
 		//printf("%d\n", ascimode);
