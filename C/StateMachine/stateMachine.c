@@ -27,6 +27,7 @@
 #include <sys/time.h>
 #include "E4235.h"
 #include "bcm2835.h"
+#include <string.h>
 
 void printnums(char output[8]) {
 	for(int o = 10; o < 18; o++) {
@@ -42,13 +43,14 @@ long currentMillis() { //remember to cite
 	struct timeval tp;
 	
 	gettimeofday(&tp, NULL);
-	return tp.tv_sec * 1000 + tp.tv_usec/1000;
+	return tp.tv_sec * 1000000 + tp.tv_usec;
 }
 
 int main(int argc, char **argv)
 {
 	long anchor = currentMillis();
 	long anchortwo = currentMillis();
+	long anchorthree = currentMillis();
 	long time = currentMillis();
 	if (!bcm2835_init())
       return 1;
@@ -71,10 +73,22 @@ int main(int argc, char **argv)
 	int pressed = 0;
 	int hash = 0;
 	int release = 0;
-	int alter = 0;
+	int alter = 2;
+	char temp = '@';
+	int wave = 0;
 	while(1){
 		long time = currentMillis();
-		//printf("%d", time);
+		//printf("%d\n", time);
+		if(time - anchorthree > 500 && wave == 0){
+			wave = 1;
+			bcm2835_gpio_write(9, LOW);
+			anchorthree = currentMillis();
+		}
+		else if(time - anchorthree > 500 && wave == 1){
+		wave = 0;
+		bcm2835_gpio_write(9, HIGH);
+		anchorthree = currentMillis();
+		
 		for(int x = 20; x < 24; x++){
 			bcm2835_gpio_write(x, HIGH);
 			for(int y = 24; y < 28; y++){
@@ -85,6 +99,7 @@ int main(int argc, char **argv)
 						release = 0;
 				} else if(xnum == x-20 && ynum == y-24 && release == 0){
 					release = 1;
+					alter = 0;
 					anchor = currentMillis();
 					if(xnum == 3 && ynum == 2){
 						hash = 0;
@@ -93,26 +108,25 @@ int main(int argc, char **argv)
 			}
 			bcm2835_gpio_write(x, LOW);
 		}
-	if(time - anchor > 2000){
-		if(alter == 0 && anchortwo - time > 2000){
+	if(time - anchor > 2000000 && release){
+		printf("%c" ,temp);
+		if(alter == 0 && time - anchortwo > 2000000){
 			anchortwo = currentMillis();
-			printf("@\n");
+			temp = '@';
 			alter = 1;
-			printf("test");
+			printnums("10000000");
 		}
-		else if(alter == 1 && anchortwo - time > 500){ 
+		else if(alter == 1 && time - anchortwo > 500000){ 
 			anchortwo = currentMillis();
-			printf("%c", Vals[xnum][ynum]);
+			temp = Vals[xnum][ynum];
 			alter = 0;
-		}
-			
-			
+		}	
 	}
 	if(pressed == 0){
-		printf("@\n");
-		printnums("10000000");
+		alter = 0;
 	}
-	else{	
+	else{
+		printf("%c\n", Vals[xnum][ynum]);	
 		if (xnum == 3 && ynum == 2 && hash == 0) {
 			hash = 1;
 			if (ascimode == 1) {
@@ -130,6 +144,7 @@ int main(int argc, char **argv)
 		//printf("%d\n", ascimode);
 		}
 	}
-
+	}
 	return 0;
 }
+
