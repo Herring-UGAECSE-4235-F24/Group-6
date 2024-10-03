@@ -11,6 +11,7 @@ void printnums(char output[8]) { //outputs to the logic analyzer
 			bcm2835_gpio_write(o, LOW);
 		}
 	}
+	printf("%s\n", output);
 }
 
 long currentMicros() { //Our timer function. Based on code from Dave's Brain.
