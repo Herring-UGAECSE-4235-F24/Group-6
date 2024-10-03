@@ -13,7 +13,8 @@ void printnums(char output[8]) { //outputs to the logic analyzer
 	}
 }
 
-long currentMicros() { //Our timer function. Based on code from Dave's Brain.
+long currentMicros() { 		//Our timer function that finds the amount of microseconds that have passed since program start.
+				//Based on code from Dave's Brain: davekb.com/browse_programming_tips:c_get_current_time_in_milliseconds:txt
 	struct timeval tp;
 	
 	gettimeofday(&tp, NULL);
