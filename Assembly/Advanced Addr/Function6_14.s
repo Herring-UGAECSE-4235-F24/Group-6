@@ -23,7 +23,9 @@ main:
 	PUSH {LR}
 	adr	r8, cosine		@ point to lookup tables
 	adr	r9, sine
-	
+	ldr r0, =startup
+	bl printf
+restart:	
 	ldr r0, =int	@formatting scanf to take an int
 	ldr r1, =input
 	bl scanf		@get user input
@@ -32,11 +34,11 @@ main:
 	ldr r10, [r1]
 	ldr r1, [r1]	@user input stored in r1 and r10
 	
-	cmp r1, #0		@if input is < 0 or > 90, exit
-	blt exit
+	cmp r1, #0		@if input is < 0 or > 90, restart
+	blt restart
 	beq zero
 	cmp r1, #90
-	bgt exit
+	bgt restart
 	beq ninety		@if exactly 90 or 0, print the correct values
 	
 	mov r7, #4			@calculating remainder...
@@ -44,7 +46,7 @@ main:
 	mul r6, r5, r7		@r6 = r5 * 4
 	sub r1, r1, r6		@r1= remainder
 	cmp r1, #0
-	bne exit			@if not divisible by 4, exit
+	bne restart			@if not divisible by 4, restart
 	
 	ldr r2, [r8, r10]		@cosine value
 	mov r1, r10				@displaying input
@@ -55,16 +57,17 @@ main:
 	mov r1, r10				@displaying input
 	ldr r0, =output2		
 	bl printf				@printing sin
-	b exit
+	b restart
 	
 ninety:				@printing 90
 	ldr r0, =max
 	bl printf
-	b exit
+	b restart
 	
 zero:				@printing 0
 	ldr r0, =min
 	bl printf
+	b restart
 	
 exit:	
 	POP {PC}
@@ -75,7 +78,8 @@ cosine: .word	1000, 998, 990, 978, 961, 940, 914, 883, 848, 809, 766, 719, 669, 
 sine: .word 	0, 70, 139, 208, 276, 342, 407, 469, 530, 588, 643, 695, 743, 788, 829, 866, 899, 927, 951, 970, 985, 995, 999, 1000
 
 .data
-int: .asciz "%d"
+int: .asciz "%d"								@used to print ints
+startup: .asciz "Enter Angle:\n"				@startup text
 output1: .asciz "Cosine of %d = 0.%03d"			@output string is split in 2
 output2: .asciz " and Sine of %d = 0.%03d\n"	@to avoid using the stack
 max:	.asciz "Cosine of 90 = 0.000 and Sine of 90 = 1.000\n"	@0 and 90 have special print functions to print 1.000 properly
