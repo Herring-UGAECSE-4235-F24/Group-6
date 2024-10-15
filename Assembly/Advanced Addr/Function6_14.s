@@ -26,7 +26,7 @@ main:
 	
 	ldr r0, =int	@formatting scanf to take an int
 	ldr r1, =input
-	bl scanf
+	bl scanf		@get user input
 	
 	ldr r1, =input
 	ldr r10, [r1]
@@ -34,33 +34,50 @@ main:
 	
 	cmp r1, #0		@if input is < 0 or > 90, exit
 	blt exit
+	beq zero
 	cmp r1, #90
 	bgt exit
+	beq ninety		@if exactly 90 or 0, print the correct values
 	
-	mov r7, #4
+	mov r7, #4			@calculating remainder...
 	udiv r5, r1, r7		@r5 = r1/4
 	mul r6, r5, r7		@r6 = r5 * 4
 	sub r1, r1, r6		@r1= remainder
 	cmp r1, #0
-	bne exit
+	bne exit			@if not divisible by 4, exit
 	
-	ldr r4, [r9, r10]		@sine value
-	ldr r3, r10				@printing input
 	ldr r2, [r8, r10]		@cosine value
-	ldr r1, r10				@printing input again
-	ldr r0, =output			@formatting print
-	bl printf
+	mov r1, r10				@displaying input
+	ldr r0, =output1		
+	bl printf				@printing cos
 	
+	ldr r2, [r9, r10]		@sine value
+	mov r1, r10				@displaying input
+	ldr r0, =output2		
+	bl printf				@printing sin
+	b exit
+	
+ninety:				@printing 90
+	ldr r0, =max
+	bl printf
+	b exit
+	
+zero:				@printing 0
+	ldr r0, =min
+	bl printf
 	
 exit:	
 	POP {PC}
     MOV PC, LR
-   
+
+@lookup tables
 cosine: .word	1000, 998, 990, 978, 961, 940, 914, 883, 848, 809, 766, 719, 669, 616, 559, 500, 438, 375, 309, 242, 174, 105, 35, 0
 sine: .word 	0, 70, 139, 208, 276, 342, 407, 469, 530, 588, 643, 695, 743, 788, 829, 866, 899, 927, 951, 970, 985, 995, 999, 1000
 
 .data
 int: .asciz "%d"
-@test: .asciz "Cosine of %d and Sine of %d\n"
-output: .asciz "Cosine of %d = 0.%03d and Sine of %d = 0.%03d"
-input: .byte 0
+output1: .asciz "Cosine of %d = 0.%03d"			@output string is split in 2
+output2: .asciz " and Sine of %d = 0.%03d\n"	@to avoid using the stack
+max:	.asciz "Cosine of 90 = 0.000 and Sine of 90 = 1.000\n"	@0 and 90 have special print functions to print 1.000 properly
+min:	.asciz "Cosine of 0 = 1.000 and Sine of 0 = 0.000\n"
+input: .byte 0		@user input is stored here
