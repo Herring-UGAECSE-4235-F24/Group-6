@@ -77,7 +77,7 @@ void hour(char input[8]){
 		printf("Hours: %d \n", result);
 		}
 }
-int day(char input[8]){
+void day(char input[8]){
 	int result = 0;
 	if (input[5] == '1') {
 		result += 4;
@@ -87,10 +87,14 @@ int day(char input[8]){
 		result += 1;
 	}
 	result = result - 1;
-	char week[7][8] = {"Monday", "Tuesday", "Wednsday", "Thursday", "Friday", "Saturday", "Sunday"};
+	if(result == -1 || result > 6){
+		printf("Day: invalid \n");
+		return;
+	}
+	char week[7][4] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 	printf("Day: %s \n", week[result]);
 }
-int date(char input[8]){
+void date(char input[8]){
 	int result = 0;
 	if (input[2] == '1') {
 		result += 20;
@@ -110,9 +114,9 @@ int date(char input[8]){
 	if (input[7] == '1') {
 		result += 1;
 	}
-	printf("Date: %d/", result);
+	printf("%d/", result);
 }
-int month(char input[8]){
+void month(char input[8]){
 	int result = 0;
 	
 	if (input[0] == '1') {
@@ -133,9 +137,9 @@ int month(char input[8]){
 	if (input[7] == '1') {
 		result += 1;
 	}
-	printf("%d/", result);
+	printf("Date: %d/", result);
 }
-int year(char input[8]){
+void year(char input[8]){
 	int result = 0;
 	if (input[0] == '1'){
 		result += 80;
@@ -174,7 +178,6 @@ int main(int argc, char **argv)
 	bcm2835_i2c_begin();
 	bcm2835_i2c_setSlaveAddress(0x68);
 	bcm2835_i2c_set_baudrate(100000);
-	//bcm2835_i2c_setClockDivider(1000);
 	uint8_t data = bcm2835_i2c_read(rec, 7);
 	for(int i = 0; i < 7; i++){
 		sprintf(stored[i], "%02x", rec[i]);
@@ -195,7 +198,7 @@ int main(int argc, char **argv)
 					strcat(swi, binary[j]);
 			}
 		}
-		printf("%s \n", swi);
+		//printf("%s \n", swi);
 		strcpy(bits[i], swi);
 	}
 	
@@ -203,8 +206,8 @@ int main(int argc, char **argv)
 	min(bits[1]);
 	hour(bits[2]);
 	day(bits[3]);
-	date(bits[4]);
 	month(bits[5]);
+	date(bits[4]);
 	year(bits[6]);
 	bcm2835_i2c_end();
 	bcm2835_close();
