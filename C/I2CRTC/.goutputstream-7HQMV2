@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include "bcm2835.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int main(int argc, char **argv)
+{
+	
+	if (!bcm2835_init()){  //initializing library
+      return 1;
+     }
+	char rec[32];
+	for(int i = 0; i < 32; i++){
+		rec[i] = *"y";
+		}
+	bcm2835_i2c_begin();
+	bcm2835_i2c_setSlaveAddress(0x68);
+	//bcm2835_i2c_set_baudrate(0x186A0);
+	bcm2835_i2c_setClockDivider(BCM2835_I2C_CLOCK_DIVIDER_148);
+	uint8_t data = bcm2835_i2c_read(rec, 7);
+	printf("%d\n", data);
+	for(int i = 0; i < 32; i++){
+		printf("%c\n", rec[i]);
+	}
+	bcm2835_i2c_end();
+	bcm2835_close();
+	
+}
