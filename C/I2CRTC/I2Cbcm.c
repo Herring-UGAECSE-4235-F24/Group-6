@@ -169,6 +169,7 @@ int main(int argc, char **argv)
 	char rec[7];
 	char stored[7][2];
 	char bits[7][8];
+	char cmds[2] = {0x0, 0x0};
 	
 	char hex[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 	char binary[16][5]= {"0000", "0001", "0010", "0011", "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011", "1100", "1101", "1110", "1111"};
@@ -178,10 +179,11 @@ int main(int argc, char **argv)
 	bcm2835_i2c_begin();
 	bcm2835_i2c_setSlaveAddress(0x68);
 	bcm2835_i2c_set_baudrate(100000);
-	uint8_t data = bcm2835_i2c_read(rec, 7);
+	//bcm2835_i2c_write(0x0, 1);
+	//uint8_t data = bcm2835_i2c_read(rec, 7);
+	bcm2835_i2c_write_read_rs(cmds, 1, rec, 7);
 	for(int i = 0; i < 7; i++){
 		sprintf(stored[i], "%02x", rec[i]);
-		printf("%s\n", stored[i]);
 		//printf("%c\n", stored[i][1]);
 	}
 	
@@ -195,7 +197,7 @@ int main(int argc, char **argv)
 		}
 		for(int j = 0; j < 16; j++){
 			if(hex[j] == stored[i][1]){
-					strcat(swi, binary[j]);
+				strcat(swi, binary[j]);
 			}
 		}
 		//printf("%s \n", swi);
