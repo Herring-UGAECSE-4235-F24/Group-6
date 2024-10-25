@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     int minnum = 0;
     int secnum = 0;
     int yearnum = 0;
-    time_t mytime;	//Using time library to read system clock on the Pi
+    time_t mytime;	//Using time library (https://www.codingunit.com/c-tutorial-how-to-use-time-and-date-in-c) to read system clock on the Pi
     mytime = time(NULL);
     printf(ctime(&mytime));	//Printing time to terminal for debugging purposes
     char week[3];	//These arrays will be used to create "substrings" of the time lib output
