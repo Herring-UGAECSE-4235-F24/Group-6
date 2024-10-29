@@ -1,3 +1,4 @@
+//THIS FILE IS USED TO WRITE TO THE RTC.
 #include <stdio.h>
 #include "bcm2835.h"
 #include <stdlib.h>
@@ -9,53 +10,54 @@ int main(int argc, char **argv)
 	if (!bcm2835_init()){  //initializing library
       return 1;
      }
-    char bytes[8] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
-    char fulltime[50];
-    char weeks[7][4] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+    char bytes[8] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};	//Array holding bytes that will be written into RTC
+    char fulltime[50];	//Buffer holding the entire time output from the time library
+    char weeks[7][4] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};	/Arrays with weeks and months
     char months[12][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-    int weeknum = 0;
+	
+    int weeknum = 0;	//Values that will represent each number in decimal. Will later be converted to hex and sent to RTC
     int monthnum = 0;
     int daynum = 0;
     int hournum = 0;
     int minnum = 0;
     int secnum = 0;
     int yearnum = 0;
-    time_t mytime;
+    time_t mytime;	//Using time library (https://www.codingunit.com/c-tutorial-how-to-use-time-and-date-in-c) to read system clock on the Pi
     mytime = time(NULL);
-    printf(ctime(&mytime));
-    char week[3];
+    printf(ctime(&mytime));	//Printing time to terminal for debugging purposes
+    char week[3];	//These arrays will be used to create "substrings" of the time lib output
     char month[3];
     char day[2];
     char hour[2];
     char min[2];
     char sec[2];
     char year[4];
-    strcpy(fulltime, ctime(&mytime));
-    strncpy(week, fulltime, 3);
+    strcpy(fulltime, ctime(&mytime));	//Copying time library output into fulltime
+    strncpy(week, fulltime, 3);		//Copying each part of fulltime into the corresponding arrays
     strncpy(month, fulltime+4, 3);
     for(int i = 0; i < 7; i++){
 		if(strcmp(week, weeks[i]) == 0){
 			weeknum = i + 1;
 		}
-	}
-	for(int i = 0; i < 12; i++){
+	}				//For the strings in fulltime (month and day of week), looking through the arrays 
+	for(int i = 0; i < 12; i++){	//and assigning a number to weeknum and monthnum
 		if(strcmp(month, months[i]) == 0){
 			monthnum = i + 1;
 		}
 	}
-    strncpy(day, fulltime+8, 2);
+    strncpy(day, fulltime+8, 2);	//Continuing to break fulltime into substrings
     strncpy(hour, fulltime+11, 2);
     strncpy(min, fulltime+14, 2);
     strncpy(sec, fulltime+17, 2);
     strncpy(year, fulltime+22, 2);
-    daynum = strtol(day, (char**)NULL, 10);
+    daynum = strtol(day, (char**)NULL, 10);	//Converting the remaining strings into integers
     hournum = strtol(hour, (char**)NULL, 10);
     minnum = strtol(min, (char**)NULL, 10);
     secnum = strtol(sec, (char**)NULL, 10);
     yearnum = strtol(year, (char**)NULL, 10);
     
-    if(secnum >= 40){
-		secnum -= 40;
+    if(secnum >= 40){		//These if statements use the previously found integers to 
+		secnum -= 40;	//"encode" into bytes, in accordance with the RTC datasheet
 		bytes[1] += 0x40;
 	} if(secnum >= 20){
 		secnum -= 20;
@@ -77,7 +79,7 @@ int main(int argc, char **argv)
 		bytes[1] += 0x1;
 	} 
 	
-	if(minnum >= 40){
+	if(minnum >= 40){	//Encoding minutes
 		minnum -= 40;
 		bytes[2] += 0x40;
 	} if(minnum >= 20){
@@ -100,7 +102,7 @@ int main(int argc, char **argv)
 		bytes[2] += 0x1;
 	}
 		
-	if(hournum >= 20){
+	if(hournum >= 20){	//Encoding hours
 		hournum -= 20;
 		bytes[3] += 0x20;
 	} if(hournum >= 10) {
@@ -120,7 +122,7 @@ int main(int argc, char **argv)
 		bytes[3] += 0x1;
 	}
 	
-	if(weeknum >= 4){
+	if(weeknum >= 4){	//Encoding day of week
 		weeknum -= 4;
 		bytes[4] += 0x4;
 	} if (weeknum >= 2) {
@@ -131,7 +133,7 @@ int main(int argc, char **argv)
 		bytes[4] += 0x1;
 	}
 	
-	if(daynum >= 20){
+	if(daynum >= 20){	//Encoding date of month
 		daynum -= 20;
 		bytes[5] += 0x20;
 	} if(daynum >= 10) {
@@ -151,7 +153,7 @@ int main(int argc, char **argv)
 		bytes[5] += 0x1;
 	}
 	
-	if(monthnum >= 10) {
+	if(monthnum >= 10) {	//Encoding month
 		monthnum -=10;	
 		bytes[6] += 0x10;
 	} if(monthnum >= 8) {
@@ -168,7 +170,7 @@ int main(int argc, char **argv)
 		bytes[6] += 0x1;
 	}
 	
-	if(yearnum >= 80) {
+	if(yearnum >= 80) {	//Encoding year
 		yearnum -= 80;
 		bytes[7] += 0x80;
 	} if(yearnum >= 40){
@@ -194,7 +196,7 @@ int main(int argc, char **argv)
 		bytes[7] += 0x1;
 	}
 	
-    bcm2835_i2c_begin();
+    bcm2835_i2c_begin();		Starting I2C protocol, writing the encoded bytes to the RTC, and ending I2C
 	bcm2835_i2c_setSlaveAddress(0x68);
 	bcm2835_i2c_set_baudrate(100000);
 	bcm2835_i2c_write(bytes, 8);
