@@ -1,4 +1,4 @@
-OBJS = fpEx1.o
+OBJS = TaylorSeries.o
 ifdef DEBUG
 DEBUGFLGS = -g
 else
@@ -8,7 +8,7 @@ endif
 %.o : %.s
 	as -mfpu=vfpv3 $(DEBUGFLGS) $< -o $@
 GPIO_OFF: $(OBJS)
-	gcc -g -o fpEx1 $(OBJS) -lc
+	gcc -g -o TaylorSeries $(OBJS) -lc
 
 clean:
-	rm *.o fpEx1
+	rm *.o TaylorSeries
