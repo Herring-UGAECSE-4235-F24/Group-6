@@ -6,14 +6,13 @@
 main: @@ set runfast mode and rounding to nearest
 	
 	PUSH {LR}
-	ldr r0, =float
-	ldr r1, =input
+	ldr r0, =float			@preparing scanf
+	ldr r1, =input			@and reading x frmo user
 	bl scanf
 	
-	ldr r0, =input
+	ldr r0, =input			@storing input into a single register
 	vldr s0, [r0]
 	
-	@vmov s0, #0.125
 	vmrs r1, fpscr @ get FPSCR contents in r1
 	bic r2, r1, #(0b1111<<23)
 	orr r2, r2, #(0b1100<<23)
@@ -40,7 +39,7 @@ main: @@ set runfast mode and rounding to nearest
 	vadd.f32 s0,s0,s26
 	
 	
-	vcvt.f64.f32 d0, s0
+	vcvt.f64.f32 d0, s0		@converting to double and printing
 	ldr r0, =output
 	vmov r1, r2, d0
 	bl printf
@@ -55,8 +54,8 @@ _exit:
 	.word 0x3638EF1D @ 2.755732e-06
 	.word 0xB2D7322B @ -2.505211e-08
 	input:
-		.word 0
+		.word 0						@storing input
 	output:
-		.asciz "Result = %f\n"
+		.asciz "Result = %f\n"		@output statement
 	float:
-		.asciz "%f"
+		.asciz "%f"					@formatting scanf for floats
