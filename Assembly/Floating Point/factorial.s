@@ -14,24 +14,26 @@ main:
 	vldr s0, [r0]
 	vcvt.f64.f32 d0, s0
 	vmov r1, r2, d0
-	@Printing X 
-	ldr r0, =print
+	ldr r0, =print		@Printing X
 	bl printf
-	@Setting s0 to X 
-	ldr r0, =input
+	ldr r0, =input		@Setting s0 to X
 	vldr s0, [r0]
-	@Intializing registers to one  
-	vmov.f32 s4, #1.0
+	vmov.f32 s4, #1.0	@Intializing registers
 	vmov.f32 s1, #1.0
+	
+	vcmp.f32 s0, s4		@Checking for zero factorial
+	vmrs apsr_nzcv, fpscr 	@Moving updated arm flags to fpscr
+	blt printing		@If n < 1, print
 fact:
-	vmul.f32 s3,s0,s1 @Multiplying the the base by the current iteration
-	vmov.f32 s1, s3 @Moving answer to the register that will be multiplied 
-	vcmp.f32 s0, s4 @Updating the flags
-	vsub.f32 s0, s0, s4 @Subtracting one for the next iteration
-	vmrs apsr_nzcv, fpscr @Moving updated arm flags to fpscr
+	vmul.f32 s3,s0,s1 	@Multiplying the the base by the current iteration
+	vmov.f32 s1, s3 	@Moving answer to the register that will be multiplied 
+	vcmp.f32 s0, s4 	@Updating the flags
+	vsub.f32 s0, s0, s4 	@Subtracting one for the next iteration
+	vmrs apsr_nzcv, fpscr 	@Updating flags
 	bne fact
-	@Converting to double for printing
-	vcvt.f64.f32 d0, s1
+
+printing:	
+	vcvt.f64.f32 d0, s1	@Converting to double for printing
 	ldr r0, =output
 	vmov r1, r2, d0
 	bl printf

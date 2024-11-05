@@ -1,4 +1,4 @@
-OBJS = factorial.o
+OBJS = expo.o
 ifdef DEBUG
 DEBUGFLGS = -g
 else
@@ -8,7 +8,7 @@ endif
 %.o : %.s
 	as -mfpu=vfpv3 $(DEBUGFLGS) $< -o $@
 GPIO_OFF: $(OBJS)
-	gcc -g -o factorial $(OBJS) -lc
+	gcc -g -o expo $(OBJS) -lc
 
 clean:
-	rm *.o factorial
+	rm *.o expo

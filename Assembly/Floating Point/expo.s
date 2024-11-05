@@ -19,7 +19,7 @@ main:
 	vldr s0, [r0]
 	vcvt.f64.f32 d0, s0	
 	vmov r1, r2, d0
-	ldr r0, =print
+	ldr r0, =float
 	bl printf
 
 	ldr r0, =expplace	@printing n
@@ -33,12 +33,15 @@ main:
 	ldr r4, [r1]
 	
 	vmov.f32 s1, #1.0	@initializing result
+	cmp r4, #0			@checking for zero exponent
+	beq printing		@if so, print 1
 expo:
-	vmul.f32 s3,s1,s0	@multiply n by result
+	vmul.f32 s3,s1,s0	@multiply by x
 	vmov.f32 s1, s3		@update result
 	subs r4, #1			@decrement exponent as a counter
 	bne expo			@if exponent isn't 0, multiply again
 	
+printing:
 	vcvt.f64.f32 d0, s1	@convert to double and print
 	ldr r0, =output
 	vmov r1, r2, d0
