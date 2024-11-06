@@ -7,7 +7,7 @@ main: @@ set runfast mode and rounding to nearest
 	
 	PUSH {LR}
 	ldr r0, =float			@preparing scanf
-	ldr r1, =input			@and reading x frmo user
+	ldr r1, =input			@and reading x from user
 	bl scanf
 	
 	ldr r0, =input			@storing input into a single register
