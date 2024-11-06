@@ -1,6 +1,7 @@
 	.global main
     .func main
 
+	@THIS VERSION OF EXPO RUNS STANDALONE
 main:
 	PUSH {LR}
 	ldr r0, =enterx		@enter x message

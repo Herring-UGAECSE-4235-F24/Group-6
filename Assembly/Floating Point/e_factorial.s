@@ -1,30 +1,15 @@
-	.global main
-        .func main
+	.global e_factorial
+        .func e_factorial
 
-	@THIS VERSION OF FACTORIAL RUNS STANDALONE
-main:
+	@THIS VERSION OF FACTORIAL SHOULD BE LINKED WITH e_expo.c
+e_factorial:
 	PUSH {LR}
-	ldr r0, =startup	@Printing the initial welcome message
-	bl printf
-	
-	ldr r0, =float		@Setting up the input for x
-	ldr r1, =input
-	bl scanf
-	
-	ldr r0, =input		@Converting to a double to ensure printing
-	vldr s0, [r0]
-	vcvt.f64.f32 d0, s0
-	vmov r1, r2, d0
-	ldr r0, =print		@Printing X
-	bl printf
-	ldr r0, =input		@Setting s0 to X
-	vldr s0, [r0]
 	vmov.f32 s4, #1.0	@Intializing registers
 	vmov.f32 s1, #1.0
 	
 	vcmp.f32 s0, s4		@Checking for zero factorial
 	vmrs apsr_nzcv, fpscr 	@Moving updated arm flags to fpscr
-	blt printing		@If n < 1, print
+	blt _exit		@If n < 1, exit
 fact:
 	vmul.f32 s3,s0,s1 	@Multiplying the the base by the current iteration
 	vmov.f32 s1, s3 	@Moving answer to the register that will be multiplied 
@@ -33,15 +18,10 @@ fact:
 	vmrs apsr_nzcv, fpscr 	@Updating flags
 	bne fact
 
-printing:	
-	vcvt.f64.f32 d0, s1	@Converting to double for printing
-	ldr r0, =output
-	vmov r1, r2, d0
-	bl printf
-
 _exit:
-        POP {PC}
-        MOV PC, LR
+		vmov.f32 s0, s1		@moving result to s0 to access from C file
+        POP {PC}			@printing the result is not needed
+        BX LR
 	
 	@HIGHEST ACCURATE NUMBER = 13
 	
