@@ -1,4 +1,4 @@
-OBJS = Pin21.o
+OBJS = Pin26.o
 ifdef DEBUG
 DEBUGFLGS = -g
 else
@@ -8,7 +8,7 @@ endif
 %.o : %.s
 	as  $(DEBUGFLGS) $< -o $@
 GPIO_OFF: $(OBJS)
-	gcc -g -o Pin21 $(OBJS) -lc
+	gcc -g -o Pin26 $(OBJS) -lc
 
 clean:
-	rm *.o Pin21
+	rm *.o Pin26

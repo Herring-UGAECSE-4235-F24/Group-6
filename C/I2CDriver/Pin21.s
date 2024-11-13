@@ -1,7 +1,8 @@
 @ GPOI21 Related
-.equ    GPSET21, 0xe9    @ set register offset
-.equ    GPIO_REG1_GPIO21_MASK, 0b1100   @ Mask for fn register
-.equ    PIN, 21                         @ Changes GPIO twenty
+.equ    GPSET21, 0xe8    @ set register offset
+.equ    GPIO_REG1_GPIO21_MASK, 0b110000000000   @ Mask for fn register
+.equ    PIN, 21
+.equ    MAKE_GPIO21_OUTPUT, 0b0                           @ Changes GPIO twenty
 
 @ Args for mmap
 .equ    OFFSET_FILE_DESCRP, 0   @ file descriptor
@@ -45,6 +46,7 @@ main:
     add     r0, r5, #GPSET21            @ calculate address for GPFSEL2
     ldr     r2, [r0]                    @ get entire GPFSEL2 register
     bic     r2, r2, #GPIO_REG1_GPIO21_MASK @ clear pin field
+    orr     r2, r2, #MAKE_GPIO21_OUTPUT
     str     r2, [r0]                    @ update register
     
 GPIO_BASE:

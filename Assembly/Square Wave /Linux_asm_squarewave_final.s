@@ -10,8 +10,8 @@
 .equ    GPCLR0, 0x28    @ clear register offset
 .equ    GPSET0, 0x1c    @ set register offset
 .equ    GPFSEL2_GPIO22_MASK, 0b111000   @ Mask for fn register
-.equ    MAKE_GPIO22_OUTPUT, 0b1000000         @ Changes GPIO twenty
-.equ    PIN, 22                         @ Changes GPIO twenty
+.equ    MAKE_GPIO22_OUTPUT, 0b1000         @ Changes GPIO twenty
+.equ    PIN, 21                         @ Changes GPIO twenty
 
 @ Args for mmap
 .equ    OFFSET_FILE_DESCRP, 0   @ file descriptor

@@ -1,8 +1,8 @@
 @ GPOI26 Related
-.equ    GPSET26, 0xea    @ set register offset
-.equ    GPIO_REG1_GPIO26_MASK, 0b110000   @ Mask for fn register
+.equ    GPSET26, 0xe8    @ set register offset
+.equ    GPIO_REG1_GPIO26_MASK, 0b1100000000000000000000   @ Mask for fn register
 .equ    PIN, 26 
-
+.equ    MAKE_GPIO26_OUTPUT, 0b0         
 
 @ Args for mmap
 .equ    OFFSET_FILE_DESCRP, 0   @ file descriptor
@@ -46,6 +46,7 @@ main:
     add     r0, r5, #GPSET26            @ calculate address for GPFSEL2
     ldr     r2, [r0]                    @ get entire GPFSEL2 register
     bic     r2, r2, #GPIO_REG1_GPIO26_MASK @ clear pin field
+    orr     r2, r2, #MAKE_GPIO26_OUTPUT
     str     r2, [r0]                    @ update register
     
 GPIO_BASE:
