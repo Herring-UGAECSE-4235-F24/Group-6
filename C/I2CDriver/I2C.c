@@ -186,7 +186,6 @@ void year(char input[8]){	//Read and print year
 
 int main(int argc, char **argv)
 {
-	i2c_setup(21, 26);
 	int choice = 0;
 	printf("Enter 0 to read and 1 to write: ");
 	scanf("%d", &choice);
@@ -235,7 +234,7 @@ int main(int argc, char **argv)
 			year(bits[6]);
 		}
 	else if(choice == 1){
-		
+		i2c_setup(21, 26);
 		char bytes[8] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};	//Array holding bytes that will be written into RTC
 		int weeknum = 0;	//Values that will represent each number in decimal. Will later be converted to hex and sent to RTC
 		int monthnum = 0;
@@ -259,7 +258,7 @@ int main(int argc, char **argv)
 		printf("Enter the last two digits of the current Year (0-99): ");
 		scanf("%d", &yearnum);
 		int vals[8] = {0, secnum, minnum, hournum, weeknum, daynum, monthnum, yearnum};*/
-		int vals[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+		int vals[8] = {0, 192, 192, 20, 3, 20, 10, 98};
 		i2c_write(vals);
 	}
 	return 0;
