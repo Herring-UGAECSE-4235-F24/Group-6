@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include "bcm2835.h"
 
 void sec(char input[8]){	//Read and print seconds. Each bit adds in accordance with the RTC datasheet
 	int result = 0;
@@ -193,38 +194,9 @@ int main(int argc, char **argv)
 		choice = 0;
 	}
 	if(choice == 0){
-			char rec[7];	//Buffer that the RTC will read into
-			char stored[7][2];	//After reading, each byte is converted into 2 hex characters
+			i2c_setup(21, 26);
 			char bits[7][8];	//These hex chars are then converted into 8 bit binary strings
-			char cmds[2] = {0x0, 0x0};
-
-			//Arrays that are used to convert the data first into hex and then binary
-			char hex[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-			char binary[16][5]= {"0000", "0001", "0010", "0011", "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011", "1100", "1101", "1110", "1111"};
-			for(int i = 0; i < 32; i++){
-				rec[i] = *"y";
-				}
-			
-			
-			for(int i = 0; i < 7; i++){
-				sprintf(stored[i], "%02x", rec[i]);	//Converting the bytes into hex chars and storing into an array
-			}
-			
-			for(int i = 0; i < 7; i++){
-				char swi[] = "00000000";
-				for(int k = 0; k <16; k++){
-					if(hex[k] == stored[i][0]){
-						strcpy(swi, binary[k]);		//For each hex char, add the corresponding binary values to a string
-					}
-				}
-				for(int j = 0; j < 16; j++){
-					if(hex[j] == stored[i][1]){
-						strcat(swi, binary[j]);		//Adding the next 4 binary values to the string
-					}
-				}
-				strcpy(bits[i], swi);	//Copying the string into the bits array
-			}
-			
+			i2c_read(bits);
 			sec(bits[0]);		//Calling each method with the corresponding binary values
 			min(bits[1]);		//They will process the bits to match the RTC datasheet
 			hour(bits[2]);		//The methods are called in this order to print the time in a readable manner
@@ -258,7 +230,7 @@ int main(int argc, char **argv)
 		printf("Enter the last two digits of the current Year (0-99): ");
 		scanf("%d", &yearnum);
 		int vals[8] = {0, secnum, minnum, hournum, weeknum, daynum, monthnum, yearnum};*/
-		int vals[8] = {0, 192, 192, 20, 3, 20, 10, 98};
+		int vals[8] = {0, 192, 192, 20, 9, 20, 10, 98};
 		i2c_write(vals);
 	}
 	return 0;
