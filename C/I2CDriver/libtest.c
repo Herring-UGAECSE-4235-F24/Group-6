@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "E4235.h"
-
+//UNUSED FOR I2CDRIVER
 //Testing class library
 
 int main(int argc, char **argv)
