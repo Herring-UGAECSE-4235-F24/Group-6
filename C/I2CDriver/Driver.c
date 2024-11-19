@@ -71,7 +71,7 @@ int i2c_write(int bytes[8]){	//writing to RTC
 	E4235_Select(sda, 0);	//stop condition
 }
 
-void i2c_read(char thing[][8]){
+void i2c_read(char thing[][8]){	//Reads from RTC and saves into input array
 	E4235_Select(sda, 1);	//SDA falling edge, start condition
 	E4235_Select(scl, 1);
 
@@ -102,18 +102,18 @@ void i2c_read(char thing[][8]){
 				}
 				E4235_Select(scl, 1);	//setting clock to low for next byte
 			}
-			if(i == 8){					//sending acknowledge bit
+			if(i == 8){					//byte has been read
 				strcpy(thing[j], "");	
-				strcpy(thing[j], swi);
-				if(j < 6){				//before final byte, send ACK
+				strcpy(thing[j], swi);			//storing byte into array 
+				if(j < 6){				//before final byte, data is low for ACK
 					E4235_Select(sda, 1);
 				}
-				else{					//otherwise, send NACK
+				else{					//otherwise, data is high for NACK
 					E4235_Select(sda, 0);
 				}
-				E4235_Select(scl, 0);	//toggle clock
+				E4235_Select(scl, 0);	//toggle clock to send ACK/NACK
 				E4235_Select(scl, 1);	
-				E4235_Select(sda, 0);	//setting data to input for next byte
+				E4235_Select(sda, 0);	//setting data to input to read next byte
 			}
 		}
 	}
