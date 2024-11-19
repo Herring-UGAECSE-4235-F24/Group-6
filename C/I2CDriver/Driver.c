@@ -1,8 +1,8 @@
+//THIS IS OUR DRIVER FILE.
 #include <stdio.h>
 #include "E4235.h"
 #include <unistd.h>
 #include <string.h>
-#include "bcm2835.h"
 
 static int sda = 0;		//data pin
 static int scl = 0;		//clk pin
