@@ -2,7 +2,6 @@
 #include "E4235.h"
 #include <unistd.h>
 #include <string.h>
-#include "bcm2835.h"
 
 static int sda = 0;		//data pin
 static int scl = 0;		//clk pin
@@ -39,12 +38,12 @@ void i2c_send(char byte[]){		//sends a byte to the RTC using a string
 	E4235_Select(scl, 1);
 }
 
-int i2c_write(int bytes[8]){	//writing to RTC
+int i2c_write(char address[8], int bytes[8]){	//writing to RTC. first parameter is starting address
 		
 	char bin[8][8];		//array of strings that will be written to RTC
 	char swi[] = "";	//current string that will be added to bin
 	int curr;			//current bit
-	//int state = 0;		
+	
 	for(int i = 0; i <= 7; i++){	//converting decimal numbers to binary
 		curr = bytes[i];			//converts the ints inputted into strings of 1s and 0s
 		int k = 7;					
@@ -58,7 +57,7 @@ int i2c_write(int bytes[8]){	//writing to RTC
 		}
 		strcpy(bin[i], swi);		//copy into array
 	}
-	
+	strcpy(bin[0], address);	//copying address into first byte
 	E4235_Select(sda, 1);	//SDA falling edge, start condition
 	E4235_Select(scl, 1);
 	
@@ -71,13 +70,13 @@ int i2c_write(int bytes[8]){	//writing to RTC
 	E4235_Select(sda, 0);	//stop condition
 }
 
-void i2c_read(char thing[][8]){
+void i2c_read(char address[8], char thing[][8]){	//reading from RTC and storing result in array. first parameter is starting address
 	E4235_Select(sda, 1);	//SDA falling edge, start condition
 	E4235_Select(scl, 1);
 
 	i2c_send("11010000");	//sending slave address + Write bit
 	
-	i2c_send("00000000");	//sending address bit. read will start from here
+	i2c_send(address);	//sending address byte. read will start from here
 	
 	E4235_Select(sda, 0);	//Repeated start for read mode
 	E4235_Select(scl, 0);
@@ -102,18 +101,18 @@ void i2c_read(char thing[][8]){
 				}
 				E4235_Select(scl, 1);	//setting clock to low for next byte
 			}
-			if(i == 8){					//sending acknowledge bit
+			if(i == 8){					//byte has been read
 				strcpy(thing[j], "");	
 				strcpy(thing[j], swi);
-				if(j < 6){				//before final byte, send ACK
+				if(j < 6){				//before final byte, data is low for ACK
 					E4235_Select(sda, 1);
 				}
-				else{					//otherwise, send NACK
+				else{					//otherwise, data is high for NACK
 					E4235_Select(sda, 0);
 				}
-				E4235_Select(scl, 0);	//toggle clock
+				E4235_Select(scl, 0);	//toggle clock to end ACK/NACK
 				E4235_Select(scl, 1);	
-				E4235_Select(sda, 0);	//setting data to input for next byte
+				E4235_Select(sda, 0);	//setting data to input to read byte
 			}
 		}
 	}

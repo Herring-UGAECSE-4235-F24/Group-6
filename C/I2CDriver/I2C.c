@@ -1,32 +1,8 @@
-/*
- * I2C.c
- * 
- * Copyright 2024  <group6-24@raspberrypi>
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
- * 
- * 
- */
-
 #include "Driver.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include "bcm2835.h"
 
 void sec(char input[8]){	//Read and print seconds. Each bit adds in accordance with the RTC datasheet
 	int result = 0;
@@ -196,7 +172,7 @@ int main(int argc, char **argv)
 	if(choice == 0){
 			i2c_setup(21, 26);
 			char bits[7][8];	//These hex chars are then converted into 8 bit binary strings
-			i2c_read(bits);		//Calling read, output will be put into the bits array
+			i2c_read("00000000", bits);		//Calling read, output will be put into the bits array
 			sec(bits[0]);		//Calling each method with the corresponding binary values
 			min(bits[1]);		//They will process the bits to match the RTC datasheet
 			hour(bits[2]);		//The methods are called in this order to print the time in a readable manner
@@ -374,7 +350,7 @@ int main(int argc, char **argv)
 		for(int i = 0; i < 8; i++){
 				output[i] = (int)bytes[i];	//converting chars into ints for the driver
 		}
-		i2c_write(output);
+		i2c_write("00000000", output);
 	}
 	return 0;
 }
