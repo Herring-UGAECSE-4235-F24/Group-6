@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include "bcm2835.h"
 
 void sec(char input[8]){	//Read and print seconds. Each bit adds in accordance with the RTC datasheet
 	int result = 0;
