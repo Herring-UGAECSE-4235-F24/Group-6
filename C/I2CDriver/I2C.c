@@ -196,7 +196,7 @@ int main(int argc, char **argv)
 	if(choice == 0){
 			i2c_setup(21, 26);
 			char bits[7][8];	//These hex chars are then converted into 8 bit binary strings
-			i2c_read("00000000", bits);		//Calling read, output will be put into the bits array
+			i2c_read(bits);		//Calling read, output will be put into the bits array
 			sec(bits[0]);		//Calling each method with the corresponding binary values
 			min(bits[1]);		//They will process the bits to match the RTC datasheet
 			hour(bits[2]);		//The methods are called in this order to print the time in a readable manner
@@ -374,7 +374,7 @@ int main(int argc, char **argv)
 		for(int i = 0; i < 8; i++){
 				output[i] = (int)bytes[i];	//converting chars into ints for the driver
 		}
-		i2c_write("00000000", output);
+		i2c_write(output);
 	}
 	return 0;
 }

@@ -39,7 +39,7 @@ void i2c_send(char byte[]){		//sends a byte to the RTC using a string
 	E4235_Select(scl, 1);
 }
 
-int i2c_write(char address[8], int bytes[8]){	//writing to RTC
+int i2c_write(int bytes[8]){	//writing to RTC
 		
 	char bin[8][8];		//array of strings that will be written to RTC
 	char swi[] = "";	//current string that will be added to bin
@@ -58,7 +58,7 @@ int i2c_write(char address[8], int bytes[8]){	//writing to RTC
 		}
 		strcpy(bin[i], swi);		//copy into array
 	}
-	strcpy(bin[0], address);
+	
 	E4235_Select(sda, 1);	//SDA falling edge, start condition
 	E4235_Select(scl, 1);
 	
@@ -71,13 +71,13 @@ int i2c_write(char address[8], int bytes[8]){	//writing to RTC
 	E4235_Select(sda, 0);	//stop condition
 }
 
-void i2c_read(char address[8], char thing[][8]){
+void i2c_read(char thing[][8]){
 	E4235_Select(sda, 1);	//SDA falling edge, start condition
 	E4235_Select(scl, 1);
 
 	i2c_send("11010000");	//sending slave address + Write bit
 	
-	i2c_send(address);	//sending address bit. read will start from here
+	i2c_send("00000000");	//sending address bit. read will start from here
 	
 	E4235_Select(sda, 0);	//Repeated start for read mode
 	E4235_Select(scl, 0);
