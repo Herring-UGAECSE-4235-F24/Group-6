@@ -1,4 +1,4 @@
-//THIS IS OUR DRIVER PROGRAM
+//THIS IS OUR MAIN PROGRAM. IT USES OUR DRIVER FILE.
 #include "Driver.h"
 #include <stdio.h>
 #include <stdlib.h>
