@@ -49,7 +49,7 @@ int i2c_write(char address[8], int bytes[8]){	//writing to RTC. first parameter 
 		int k = 7;					
 		char swi[] = "00000000";	
 		while(curr > 0){			//binary conversion code adapted from geeks4geeks
-			if(curr%2 == 1){
+			if(curr%2 == 1){		//geeksforgeeks.org/program-decimal-binary-conversion
 				swi[k] = '1';
 			}
 			curr = curr/2;
